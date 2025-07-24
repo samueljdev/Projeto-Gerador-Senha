@@ -2,6 +2,15 @@
 const generatePasswordButton = document.querySelector("#generate-password");
 const generatedPasswordElement = document.querySelector("#generated-password");
 
+// Após refatoração
+const openCloseGeneratorButton = document.querySelector("#open-generate-password");
+const generatePasswordContainer = document.querySelector("#generate-options");
+const lengthInput = document.querySelector("#length");
+const lettersInput = document.querySelector("#letters");
+const numbersInput = document.querySelector("#numbers");
+const symbolsInput = document.querySelector("#symbols");
+const copyPasswordButton = document.querySelector("#copy-password");
+
 // Funções
 const getLetterLowerCase = () => {
     return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
@@ -12,7 +21,7 @@ const getLetterUpperCase = () => {
 };
 
 const getNumber = () => {
-    return Math.floor(Math.random() * 11).toString;
+    return Math.floor(Math.random() * 11).toString();
 };
 
 const getSymbol = () => {
@@ -23,16 +32,30 @@ const getSymbol = () => {
 const generatePassword = (getLetterLowerCase, getLetterUpperCase, getNumber, getSymbol) => {
     let password = "";
 
-    const passwordLength = 10;
+    // Após refatoração
+    const passwordLength = lengthInput.value;
 
-    const generators = [
-        getLetterLowerCase,
-        getLetterUpperCase,
-        getNumber,
-        getSymbol,
-    ];
+    const generators = [];
 
-    for (i = 0; i < passwordLength; i = i + 4) {
+    if (lettersInput.checked) {
+        generators.push(getLetterLowerCase, getLetterUpperCase);
+    }
+
+    if (numbersInput.checked) {
+        generators.push(getNumber);
+    }
+
+    if (symbolsInput.checked) {
+        generators.push(getSymbol);
+    }
+
+    console.log(generators.length.toString)
+
+    if (generators.length === 0) {
+        return;
+    }
+
+    for (i = 0; i < passwordLength; i = i + generators.length) {
         generators.forEach(() => {
             const randomValue = generators[Math.floor(Math.random() * generators.length)]();
             password += randomValue;
@@ -45,5 +68,10 @@ const generatePassword = (getLetterLowerCase, getLetterUpperCase, getNumber, get
 
 // Eventos
 generatePasswordButton.addEventListener("click", (e) => {
+    e.preventDefault();
     generatePassword(getLetterLowerCase, getLetterUpperCase, getNumber, getSymbol);
+});
+
+openCloseGeneratorButton.addEventListener("click", () => {
+    generatePasswordContainer.classList.toggle("hide");
 });
